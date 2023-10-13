@@ -33,7 +33,7 @@ class VendaVeiculo:
     def get_cliente(self) -> Cliente:
         return self.cliente
 
-    def get_veiculos(self) -> Veiculos:
+    def get_veiculos(self) -> Veiculo:
         return self.veiculos
 
 #Setters
@@ -52,7 +52,7 @@ class VendaVeiculo:
     def set_cliente(self, cliente: Cliente):
         self.cliente = cliente
 
-    def set_veiculos(self, veiculos: Veiculos):
+    def set_veiculos(self, veiculos: Veiculo):
         self.veiculos = veiculos
 
 #ToString
