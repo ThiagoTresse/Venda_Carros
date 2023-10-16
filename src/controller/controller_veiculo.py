@@ -1,11 +1,11 @@
-from model.produtos import Produto
+from model.veiculos import Veiculo
 from conexion.oracle_queries import OracleQueries
 
-class Controller_Produto:
+class Controller_Veiculo:
     def __init__(self):
         pass
         
-    def inserir_produto(self) -> Produto:
+    def inserir_veiculo(self) -> Veiculo:
         ''' Ref.: https://cx-oracle.readthedocs.io/en/latest/user_guide/plsql_execution.html#anonymous-pl-sql-blocks'''
         
         # Cria uma nova conexão com o banco
@@ -16,7 +16,7 @@ class Controller_Produto:
         output_value = cursor.var(int)
 
         #Solicita ao usuario a nova descrição do produto
-        descricao_novo_produto = input("Descrição (Novo): ")
+        descricao_novo_veiculo = input("Descrição (Novo): ")
 
         # Cria um dicionário para mapear as variáveis de entrada e saída
         data = dict(codigo=output_value, descricao_produto=descricao_novo_produto)
