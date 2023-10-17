@@ -39,29 +39,30 @@ class Controller_Venda:
         # Cria a variável de saída com o tipo especificado
         output_value = cursor.var(int)
 
-        # Cria um dicionário para mapear as variáveis de entrada e saída        // ajustar aqui 
-        data = dict(VendaVeiculo=output_value, dataVenda=data_hoje, cpfCliente=Cliente.get_cpfCliente(), idCarro=Veiculo.get_idCarro())  '''aqui'''
+        # Cria um dicionário para mapear as variáveis de entrada e saída         
+        data = dict(VendaVeiculo=output_value, dataVenda=data_hoje, idVenda=VendaVeiculo.get_idVenda(), valorVenda=VendaVeiculo.get_valorVenda(),
+                    idVendedor=VendaVeiculo.get_idVendedor(),  cpfCliente=Cliente.get_cpfCliente(), idCarro=Veiculo.get_idCarro()) 
         # Executa o bloco PL/SQL anônimo para inserção do novo produto e recuperação da chave primária criada pela sequence
         cursor.execute("""
         begin
-            :idVenda := VENDA_CODIGO_PEDIDO_SEQ.NEXTVAL;
-            insert into VendaVeiculo values(:idVenda, :valorVenda, :dataVenda, :idVendedor, :cpf, :cnpj);
+            :idVenda := VENDA_CODIGO_SEQ.NEXTVAL;    
+            insert into VendaVeiculo values(:idVenda, :valorVenda, :dataVenda, :idVendedor, :cpfCliente, :idCarro);
         end;
         """, data)
         # Recupera o código da nova venda
-        codigo_venda = output_value.getvalue()
+        idVenda = output_value.getvalue()
         # Persiste (confirma) as alterações
         oracle.conn.commit()
-        # Recupera os dados do novo produto criado transformando em um DataFrame
-        df_venda = oracle.sqlToDataFrame(f"select codigo_venda, data_pedido from venda where codigo_pedido = {codigo_pedido}")
-        # Cria um novo objeto Produto
-        nova_venda = VendaVeiculo(df_venda.codigo_pedido.values[0], df_pedido.data_pedido.values[0], cliente, fornecedor)
-        # Exibe os atributos do novo produto
+        # Recupera os dados do novo pedido criado transformando em um DataFrame
+        df_venda = oracle.sqlToDataFrame(f"select idVenda, valorVenda, dataVenda, idVendedor, cpfCliente, idCarro from vendaVeiculos where idVenda = {idVenda}")
+        # Cria um novo objeto venda
+        nova_venda = VendaVeiculo(df_venda.idVenda.values[0], df_venda.dataVenda.values[0], df_venda.idVendedor.values[0], df_venda.cpfCliente[0], df_venda.idCarro[0])
+        # Exibe os atributos da nova venda
         print(nova_venda.to_string())
         # Retorna o objeto novo_pedido para utilização posterior, caso necessário
         return nova_venda
 
-    def atualizar_pedido(self) -> VendaVeiculo:
+    def atualizar_venda(self) -> VendaVeiculo:
         # Cria uma nova conexão com o banco que permite alteração
         oracle = OracleQueries(can_write=True)
         oracle.connect()
@@ -89,17 +90,17 @@ class Controller_Venda:
             data_hoje = date.today()
 
             # Atualiza a descrição do produto existente
-            oracle.write(f"update pedidos set cpf = '{cliente.get_CPF()}', cnpj = '{fornecedor.get_CNPJ()}', data_pedido = to_date('{data_hoje}','yyyy-mm-dd') where codigo_pedido = {codigo_pedido}")
+            oracle.write(f"update Venda set idVenda = '{VendaVeiculo.get_idVenda}', valorVenda= '{}''{Cliente.get_cpfCliente()}', Veiculo = '{fornecedor.get_CNPJ()}', data_pedido = to_date('{data_hoje}','yyyy-mm-dd') where idVenda = {idVenda}")
             # Recupera os dados do novo produto criado transformando em um DataFrame
-            df_pedido = oracle.sqlToDataFrame(f"select codigo_pedido, data_pedido from pedidos where codigo_pedido = {codigo_pedido}")
+            df_pedido = oracle.sqlToDataFrame(f"select vendaVeiculos  idVenda, valorVenda, dataVenda, idVendedor, cpfCliente, idCarro from VendaVeiculo where idVenda = {idVenda}")
             # Cria um novo objeto Produto
-            pedido_atualizado = Pedido(df_pedido.codigo_pedido.values[0], df_pedido.data_pedido.values[0], cliente, fornecedor)
+            venda_atualizada = Pedido(df_pedido.codigo_pedido.values[0], df_pedido.data_pedido.values[0], cliente, fornecedor)
             # Exibe os atributos do novo produto
-            print(pedido_atualizado.to_string())
+            print(venda_atualizada.to_string())
             # Retorna o objeto pedido_atualizado para utilização posterior, caso necessário
-            return pedido_atualizado
+            return venda_atualizada
         else:
-            print(f"O código {codigo_pedido} não existe.")
+            print(f"O id {idVenda} não existe.")
             return None
 
     def excluir_pedido(self):
