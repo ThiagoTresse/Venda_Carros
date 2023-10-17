@@ -28,7 +28,7 @@ class VendaVeiculo:
         return self.datavenda
 
     def get_idVendedor(self) -> int:
-        return self.set_idVendedor
+        return self.idVendedor
 
     def get_cliente(self) -> Cliente:
         return self.cliente
@@ -58,4 +58,4 @@ class VendaVeiculo:
 #ToString
     def to_string(self) -> str:
         return (f"Venda: {self.get_idVenda()} | Valor: {self.get_valorVenda()} | Data: {self.get_dataVenda()} |"
-        f" Vendedor: {self.get_idVendedor()} | Cliente: {self.get_cliente().get_cpfCliente()} | Veiculo: {self.get_veiculos().get_idVeiculos()}")
+        f" Vendedor: {self.get_idVendedor()} | Cliente: {self.get_cliente().get_cpfCliente()} | Veiculo: {self.get_veiculos().get_idCarro()}")
