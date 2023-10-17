@@ -90,7 +90,7 @@ class Controller_Veiculo:
             print(f"O id {idCarro} não está cadastrado.")
             return None
 
-    def excluir_produto(self) -> Veiculo:
+    def excluir_veiculo(self) -> Veiculo:
         # Cria uma nova conexão com o banco que permite alteração
         oracle = OracleQueries(can_write=True)
         oracle.connect()
