@@ -29,7 +29,7 @@ class Controller_Cliente:
             # Insere e persiste o novo cliente
             oracle.write(f"insert into clientes values ('{cpfCliente}', '{idCliente}', '{nome})', '{email}', '{telefone}', '{endereco}' ")
             # Recupera os dados do novo cliente criado transformando em um DataFrame
-            df_cliente = oracle.sqlToDataFrame(f"select cpf, nome from clientes where cpf = '{cpfCliente}'")
+            df_cliente = oracle.sqlToDataFrame(f"select cpfCliente, idCliente, nome, email, telefone, endereco from clientes where cpfCliente = '{cpfCliente}'")
             # Cria um novo objeto Cliente
             novo_cliente = Cliente(df_cliente.cpfCliente.values[0], df_cliente.idCliente.values[0], df_cliente.nome.values[0],
                             df_cliente.email.values[0], df_cliente.telefone.values[0], df_cliente.endereco.values[0])
@@ -68,7 +68,7 @@ class Controller_Cliente:
             # Atualiza o endereco do cliente existente
             oracle.write(f"update clientes set endereco = '{novo_endereco}' where cpf = {cpfCliente}")
             # Recupera os dados do novo cliente criado transformando em um DataFrame
-            df_cliente = oracle.sqlToDataFrame(f"select cpf, nome from clientes where cpf = {cpfCliente}")
+            df_cliente = oracle.sqlToDataFrame(f"select cpfCliente, idCliente, nome, email, telefone, endereco from clientes where cpfCliente = {cpfCliente}")
             # Cria um novo objeto cliente
             cliente_atualizado = Cliente(df_cliente.cpfCliente.values[0], df_cliente.idCliente.values[0], df_cliente.nome.values[0],
                             df_cliente.email.values[0], df_cliente.telefone.values[0], df_cliente.endereco.values[0])
@@ -91,7 +91,7 @@ class Controller_Cliente:
         # Verifica se o cliente existe na base de dados
         if not self.verifica_existencia_cliente(oracle, cpfCliente):            
             # Recupera os dados do novo cliente criado transformando em um DataFrame
-            df_cliente = oracle.sqlToDataFrame(f"select cpf, nome from clientes where cpf = {cpfCliente}")
+            df_cliente = oracle.sqlToDataFrame(f"select cpfCliente, idCliente, nome, email, telefone, endereco from clientes where cpfCliente = {cpfCliente}")
             # Revome o cliente da tabela
             oracle.write(f"delete from clientes where cpf = {cpfCliente}")            
             # Cria um novo objeto Cliente para informar que foi removido
@@ -105,5 +105,5 @@ class Controller_Cliente:
 
     def verifica_existencia_cliente(self, oracle:OracleQueries, cpfCliente:str=None) -> bool:
         # Recupera os dados do novo cliente criado transformando em um DataFrame
-        df_cliente = oracle.sqlToDataFrame(f"select cpf, nome from clientes where cpf = {cpfCliente}")
+        df_cliente = oracle.sqlToDataFrame(f"select cpfCliente, idCliente, nome, email, telefone, endereco from clientes where cpfCliente = {cpfCliente}")
         return df_cliente.empty
