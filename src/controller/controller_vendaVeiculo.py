@@ -103,7 +103,7 @@ class Controller_Venda:
             print(f"O id {idVenda} não existe.")
             return None
 
-    def excluir_pedido(self):
+    def excluir_venda(self):
         # Cria uma nova conexão com o banco que permite alteração
         oracle = OracleQueries(can_write=True)
         oracle.connect()
