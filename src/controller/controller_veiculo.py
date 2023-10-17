@@ -1,7 +1,7 @@
 from model.veiculos import Veiculo
 from conexion.oracle_queries import OracleQueries
 
-class Controller_veiculo:
+class Controller_Veiculo:
     def __init__(self):
         pass
         

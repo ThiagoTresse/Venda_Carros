@@ -1,16 +1,17 @@
 from pydoc import cli
 from model.clientes import Cliente
-from controller.controller_cliente import Controller_Cliente
+from controller_cliente import Controller_Cliente
 from model.veiculos import Veiculo
+from controller_veiculo import Controller_Veiculo
 from conexion.oracle_queries import OracleQueries
 from datetime import date
 
-class Controller_Pedido:
+class Controller_Venda:
     def __init__(self):
         self.ctrl_cliente = Controller_Cliente()
-        self.ctrl_fornecedor = Controller_Fornecedor()
+        self.ctrl_veiculo = Controller_Veiculo()
         
-    def inserir_pedido(self) -> Pedido:
+    def inserir_venda(self) -> Venda:
         ''' Ref.: https://cx-oracle.readthedocs.io/en/latest/user_guide/plsql_execution.html#anonymous-pl-sql-blocks'''
         
         # Cria uma nova conexão com o banco
@@ -18,13 +19,13 @@ class Controller_Pedido:
         
         # Lista os clientes existentes para inserir no pedido
         self.listar_clientes(oracle, need_connect=True)
-        cpf = str(input("Digite o número do CPF do Cliente: "))
-        cliente = self.valida_cliente(oracle, cpf)
-        if cliente == None:
+        cpfCliente = str(input("Digite o número do CPF do Cliente: "))
+        Cliente = self.valida_cliente(oracle, cpfCliente)
+        if Cliente == None:
             return None
 
-        # Lista os fornecedores existentes para inserir no pedido
-        self.listar_fornecedores(oracle, need_connect=True)
+        # Lista os Veiculos existentes para inserir no pedido
+        self.listar_veiculos(oracle, need_connect=True)
         cnpj = str(input("Digite o número do CNPJ do Fornecedor: "))
         fornecedor = self.valida_fornecedor(oracle, cnpj)
         if fornecedor == None:
