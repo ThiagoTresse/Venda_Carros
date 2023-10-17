@@ -3,6 +3,7 @@ from model.clientes import Cliente
 from controller_cliente import Controller_Cliente
 from model.veiculos import Veiculo
 from controller_veiculo import Controller_Veiculo
+from model.Venda import VendaVeiculo
 from conexion.oracle_queries import OracleQueries
 from datetime import date
 
@@ -11,7 +12,7 @@ class Controller_Venda:
         self.ctrl_cliente = Controller_Cliente()
         self.ctrl_veiculo = Controller_Veiculo()
         
-    def inserir_venda(self) -> Venda:
+    def inserir_venda(self) -> VendaVeiculo:
         ''' Ref.: https://cx-oracle.readthedocs.io/en/latest/user_guide/plsql_execution.html#anonymous-pl-sql-blocks'''
         
         # Cria uma nova conexão com o banco
@@ -19,16 +20,16 @@ class Controller_Venda:
         
         # Lista os clientes existentes para inserir no pedido
         self.listar_clientes(oracle, need_connect=True)
-        cpfCliente = str(input("Digite o número do CPF do Cliente: "))
+        cpfCliente = int(input("Digite o número do CPF do Cliente: "))
         Cliente = self.valida_cliente(oracle, cpfCliente)
         if Cliente == None:
             return None
 
         # Lista os Veiculos existentes para inserir no pedido
         self.listar_veiculos(oracle, need_connect=True)
-        cnpj = str(input("Digite o número do CNPJ do Fornecedor: "))
-        fornecedor = self.valida_fornecedor(oracle, cnpj)
-        if fornecedor == None:
+        idCarro = int(input("Digite o número do id do Veiculo: "))
+        Veiculo = self.valida_veiculo(oracle, idCarro)
+        if Veiculo == None:
             return None
 
         data_hoje = date.today()
@@ -38,51 +39,51 @@ class Controller_Venda:
         # Cria a variável de saída com o tipo especificado
         output_value = cursor.var(int)
 
-        # Cria um dicionário para mapear as variáveis de entrada e saída
-        data = dict(codigo=output_value, data_pedido=data_hoje, cpf=cliente.get_CPF(), cnpj=fornecedor.get_CNPJ())
+        # Cria um dicionário para mapear as variáveis de entrada e saída        // ajustar aqui 
+        data = dict(VendaVeiculo=output_value, dataVenda=data_hoje, cpfCliente=Cliente.get_cpfCliente(), idCarro=Veiculo.get_idCarro())  '''aqui'''
         # Executa o bloco PL/SQL anônimo para inserção do novo produto e recuperação da chave primária criada pela sequence
         cursor.execute("""
         begin
-            :codigo := PEDIDOS_CODIGO_PEDIDO_SEQ.NEXTVAL;
-            insert into pedidos values(:codigo, :data_pedido, :cpf, :cnpj);
+            :idVenda := VENDA_CODIGO_PEDIDO_SEQ.NEXTVAL;
+            insert into VendaVeiculo values(:idVenda, :valorVenda, :dataVenda, :idVendedor, :cpf, :cnpj);
         end;
         """, data)
-        # Recupera o código do novo produto
-        codigo_pedido = output_value.getvalue()
+        # Recupera o código da nova venda
+        codigo_venda = output_value.getvalue()
         # Persiste (confirma) as alterações
         oracle.conn.commit()
         # Recupera os dados do novo produto criado transformando em um DataFrame
-        df_pedido = oracle.sqlToDataFrame(f"select codigo_pedido, data_pedido from pedidos where codigo_pedido = {codigo_pedido}")
+        df_venda = oracle.sqlToDataFrame(f"select codigo_venda, data_pedido from venda where codigo_pedido = {codigo_pedido}")
         # Cria um novo objeto Produto
-        novo_pedido = Pedido(df_pedido.codigo_pedido.values[0], df_pedido.data_pedido.values[0], cliente, fornecedor)
+        nova_venda = VendaVeiculo(df_venda.codigo_pedido.values[0], df_pedido.data_pedido.values[0], cliente, fornecedor)
         # Exibe os atributos do novo produto
-        print(novo_pedido.to_string())
+        print(nova_venda.to_string())
         # Retorna o objeto novo_pedido para utilização posterior, caso necessário
-        return novo_pedido
+        return nova_venda
 
-    def atualizar_pedido(self) -> Pedido:
+    def atualizar_pedido(self) -> VendaVeiculo:
         # Cria uma nova conexão com o banco que permite alteração
         oracle = OracleQueries(can_write=True)
         oracle.connect()
 
         # Solicita ao usuário o código do produto a ser alterado
-        codigo_pedido = int(input("Código do Pedido que irá alterar: "))        
+        idVenda = int(input("Código da Venda que irá alterar: "))        
 
         # Verifica se o produto existe na base de dados
-        if not self.verifica_existencia_pedido(oracle, codigo_pedido):
+        if not self.verifica_existencia_venda(oracle, idVenda):
 
-            # Lista os clientes existentes para inserir no pedido
+            # Lista os clientes existentes para inserir na venda
             self.listar_clientes(oracle)
-            cpf = str(input("Digite o número do CPF do Cliente: "))
-            cliente = self.valida_cliente(oracle, cpf)
-            if cliente == None:
+            cpfCliente = str(input("Digite o número do CPF do Cliente: "))
+            Cliente = self.valida_cliente(oracle, cpfCliente)
+            if Cliente == None:
                 return None
 
-            # Lista os fornecedores existentes para inserir no pedido
-            self.listar_fornecedores(oracle)
-            cnpj = str(input("Digite o número do CNPJ do Fornecedor: "))
-            fornecedor = self.valida_fornecedor(oracle, cnpj)
-            if fornecedor == None:
+            # Lista os veiculos existentes para inserir na venda
+            self.listar_veiculos(oracle)
+            idCarro = str(input("Digite o número do Veiculo: "))
+            Veiculo = self.valida_veiculo(oracle, idCarro)
+            if Veiculo == None:
                 return None
 
             data_hoje = date.today()
