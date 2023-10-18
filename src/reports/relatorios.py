@@ -11,7 +11,7 @@ class Relatorio:
             self.query_relatorio_veiculos = f.read()
 
         # Abre o arquivo com a consulta e associa a um atributo da classe
-        with open("sql/relatorio_itens_vendas.sql") as f:
+        with open("sql/relatorio_vendas.sql") as f:
             self.query_relatorio_vendas = f.read()
 
     def get_relatorio_clientes(self):
