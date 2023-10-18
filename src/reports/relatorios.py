@@ -30,7 +30,7 @@ class Relatorio:
         print(oracle.sqlToDataFrame(self.query_relatorio_veiculos))
         input("Pressione Enter para Sair do Relatório de veiculos")
 
-    def get_relatorio_itens_vendas(self):
+    def get_relatorio_vendas(self):
         # Cria uma nova conexão com o banco que permite alteração
         oracle = OracleQueries()
         oracle.connect()

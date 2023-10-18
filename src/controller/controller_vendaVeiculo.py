@@ -48,7 +48,7 @@ class Controller_Venda:
             :idVenda := VENDA_CODIGO_SEQ.NEXTVAL;    
             insert into VendaVeiculo values(:idVenda, :valorVenda, :dataVenda, :idVendedor, :cpfCliente, :idCarro);
         end;
-        """, data)
+        """, data) ################################################################################################################# REAJUSTAR DEPOIS QUE AS TABELAS SQL ESTIVEREM PRONTAS
         # Recupera o código da nova venda
         idVenda = output_value.getvalue()
         # Persiste (confirma) as alterações
@@ -56,7 +56,7 @@ class Controller_Venda:
         # Recupera os dados do novo pedido criado transformando em um DataFrame
         df_venda = oracle.sqlToDataFrame(f"select idVenda, valorVenda, dataVenda, idVendedor, cpfCliente, idCarro from vendaVeiculos where idVenda = {idVenda}")
         # Cria um novo objeto venda
-        nova_venda = VendaVeiculo(df_venda.idVenda.values[0], df_venda.dataVenda.values[0], df_venda.idVendedor.values[0], df_venda.cpfCliente[0], df_venda.idCarro[0])
+        nova_venda = VendaVeiculo(df_venda.idVenda.values[0], df_venda.valorVenda.values[0], df_venda.dataVenda.values[0], df_venda.idVendedor.values[0], df_venda.cpfCliente[0], df_venda.idCarro[0])
         # Exibe os atributos da nova venda
         print(nova_venda.to_string())
         # Retorna o objeto novo_pedido para utilização posterior, caso necessário
@@ -67,10 +67,26 @@ class Controller_Venda:
         oracle = OracleQueries(can_write=True)
         oracle.connect()
 
-        # Solicita ao usuário o código do produto a ser alterado
-        idVenda = int(input("Código da Venda que irá alterar: "))        
+        #Lista as vendas para serem alteradas
+        '''listar_vendas=(self, oracle:OracleQueries, need_connect:bool=False):
+        query = """
+                select c.cpfCliente,
+                c.idCliente,
+                c.nome,
+                c.email,
+                c.telefone,
+                c.endereco     
+                from clientes c
+                order by c.nome
+                """
+        if need_connect:
+            oracle.connect()
+        print(oracle.sqlToDataFrame(query))'''
 
-        # Verifica se o produto existe na base de dados
+        # Solicita ao usuário o código da venda a ser alterado
+        idVenda = int(input("Insira o código da Venda que irá alterar: "))        
+
+        # Verifica se a venda existe na base de dados
         if not self.verifica_existencia_venda(oracle, idVenda):
 
             # Lista os clientes existentes para inserir na venda
@@ -82,7 +98,7 @@ class Controller_Venda:
 
             # Lista os veiculos existentes para inserir na venda
             self.listar_veiculos(oracle)
-            idCarro = str(input("Digite o número do Veiculo: "))
+            idCarro = str(input("Digite o codigo do Veiculo: "))
             Veiculo = self.valida_veiculo(oracle, idCarro)
             if Veiculo == None:
                 return None
@@ -90,11 +106,11 @@ class Controller_Venda:
             data_hoje = date.today()
 
             # Atualiza a descrição do produto existente
-            oracle.write(f"update Venda set idVenda = '{VendaVeiculo.get_idVenda}', valorVenda= '{}''{Cliente.get_cpfCliente()}', Veiculo = '{fornecedor.get_CNPJ()}', data_pedido = to_date('{data_hoje}','yyyy-mm-dd') where idVenda = {idVenda}")
+            oracle.write(f"update VendaVeiculo set idVenda = '{VendaVeiculo.get_idVenda}', valorVenda= '{VendaVeiculo.get_valorVenda}', dataVenda= '{VendaVeiculo.get_dataVenda}, idVendedor= '{VendaVeiculo.get_idVendedor}', Cliente='{VendaVeiculo.get_cliente} where idVenda = {idVenda}")
             # Recupera os dados do novo produto criado transformando em um DataFrame
-            df_venda = oracle.sqlToDataFrame(f"select vendaVeiculos  idVenda, valorVenda, dataVenda, idVendedor, cpfCliente, idCarro from VendaVeiculo where idVenda = {idVenda}")
+            df_venda = oracle.sqlToDataFrame(f"select VendaVeiculos  idVenda, valorVenda, dataVenda, idVendedor, cpfCliente, idCarro from VendaVeiculo where idVenda = {idVenda}")
             # Cria um novo objeto Produto
-            venda_atualizada = VendaVeiculo(df_venda.idVenda.values[0], df_venda.data_pedido.values[0], Cliente, Veiculo)
+            venda_atualizada = VendaVeiculo(df_venda.idVenda.values[0], df_venda.valorVenda.values[0], df_venda.dataVenda.values[0], df_venda.idVendedor.values[0], df_venda.cpfCliente[0], df_venda.idCarro[0])
             # Exibe os atributos do novo produto
             print(venda_atualizada.to_string())
             # Retorna o objeto pedido_atualizado para utilização posterior, caso necessário
@@ -114,26 +130,26 @@ class Controller_Venda:
         # Verifica se o produto existe na base de dados
         if not self.verifica_existencia_venda(oracle, idVenda):            
             # Recupera os dados do novo produto criado transformando em um DataFrame
-            df_venda = oracle.sqlToDataFrame(f"select codigo_pedido, data_pedido, cpf, cnpj from pedidos where codigo_pedido = {codigo_pedido}")
-            Cliente = self.valida_cliente(oracle, df_venda.idCliente.values[0])
-            Veiculo = self.valida_veiculo(oracle, df_venda.idCarro.values[0])
+            df_venda = oracle.sqlToDataFrame(f"select VendaVeiculos  idVenda, valorVenda, dataVenda, idVendedor, cpfCliente, idCarro from VendaVeiculo where idVenda = {idVenda}")
+            #Cliente = self.valida_cliente(oracle, df_venda.idCliente.values[0])
+            #Veiculo = self.valida_veiculo(oracle, df_venda.idCarro.values[0])
             
-            opcao_excluir = input(f"Tem certeza que deseja excluir o pedido {codigo_pedido} [S ou N]: ")
+            opcao_excluir = input(f"Tem certeza que deseja excluir o pedido {idVenda} [S ou N]: ")
             if opcao_excluir.lower() == "s":
-                print("Atenção, caso o pedido possua itens, também serão excluídos!")
-                opcao_excluir = input(f"Tem certeza que deseja excluir o pedido {codigo_pedido} [S ou N]: ")
+                print("Atenção, caso a venda possua itens, também serão excluídos!")
+                opcao_excluir = input(f"Tem certeza que deseja excluir o pedido {idVenda} [S ou N]: ")
                 if opcao_excluir.lower() == "s":
                     # Revome o produto da tabela
-                    oracle.write(f"delete from itens_pedido where codigo_pedido = {codigo_pedido}")
-                    print("Itens do pedido removidos com sucesso!")
-                    oracle.write(f"delete from pedidos where codigo_pedido = {codigo_pedido}")
-                    # Cria um novo objeto Produto para informar que foi removido
-                    pedido_excluido = Pedido(df_pedido.codigo_pedido.values[0], df_pedido.data_pedido.values[0], cliente, fornecedor)
+                    oracle.write(f"delete from VendaVeiculo where idVenda = {idVenda}")
+                    print("Venda removida com sucesso!")
+                    oracle.write(f"delete from VendaVeiculo where idVenda = {idVenda}")
+                    # Cria um novo objeto Venda para informar que foi removido
+                    venda_excluida = VendaVeiculo(df_venda.idVenda.values[0], df_venda.valorVenda.values[0], df_venda.dataVenda.values[0], df_venda.idVendedor.values[0], df_venda.cpfCliente[0], df_venda.idCarro[0])
                     # Exibe os atributos do produto excluído
-                    print("Pedido Removido com Sucesso!")
-                    print(pedido_excluido.to_string())
+                    print("Venda Removida com Sucesso!")
+                    print(venda_excluida.to_string())
         else:
-            print(f"O código {codigo_pedido} não existe.")
+            print(f"O id {idVenda} não existe.")
 
     def verifica_existencia_venda(self, oracle:OracleQueries, idVenda:int=None) -> bool:
         # Recupera os dados do novo pedido criado transformando em um DataFrame
@@ -155,15 +171,31 @@ class Controller_Venda:
             oracle.connect()
         print(oracle.sqlToDataFrame(query))
 
+    def listar_veiculos(self, oracle:OracleQueries, need_connect:bool=False):
+        query = """
+                select veic.idCarro,
+                veic.modelo,
+                veic.cor,
+                veic.anoCarro,
+                veic.chassiCarro,
+                veic.tipoCambio,
+                veic.fabricante
+                from veiculos veic
+                order by veic.modelo
+                """
+        if need_connect:
+            oracle.connect()
+        print(oracle.sqlToDataFrame(query))
 
-    def valida_cliente(self, oracle:OracleQueries, cpf:str=None) -> Cliente:
-        if self.ctrl_cliente.verifica_existencia_cliente(oracle, cpf):
-            print(f"O CPF {cpf} informado não existe na base.")
+
+    def valida_cliente(self, oracle:OracleQueries, cpfCliente:str=None) -> Cliente:
+        if self.ctrl_cliente.verifica_existencia_cliente(oracle, cpfCliente):
+            print(f"O CPF {cpfCliente} informado não existe na base.")
             return None
         else:
             oracle.connect()
             # Recupera os dados do novo cliente criado transformando em um DataFrame
-            df_cliente = oracle.sqlToDataFrame(f"select cpf, nome from clientes where cpf = {cpf}")
+            df_cliente = oracle.sqlToDataFrame(f"select cpfCliente, idCliente, nome, email, telefone, endereco from clientes where cpfCliente = '{cpfCliente}'")
             # Cria um novo objeto cliente
             cliente = Cliente(df_cliente.cpf.values[0], df_cliente.nome.values[0])
             return cliente
