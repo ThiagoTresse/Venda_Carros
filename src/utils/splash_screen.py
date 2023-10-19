@@ -11,7 +11,7 @@ class SplashScreen:
         # Consultas de contagem de registros - fim
 
         # Nome(s) do(s) criador(es)
-        self.created_by = "Luiz Guilherme Oliveira, \n Marcela Silva, \n Thiago Tresse"
+        self.created_by = "Luiz Guilherme Oliveira\n Marcela Silva\nThiago Tresse"
         self.professor = "Prof. M.Sc. Howard Roatti"
         self.disciplina = "Banco de Dados"
         self.semestre = "2023/2"
