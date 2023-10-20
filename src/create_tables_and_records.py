@@ -29,7 +29,7 @@ def generate_records(query:str, sep:str=';'):
 
 def run():
 
-    with open("../sql/create_tables_Venda.sql") as f:
+    with open("../sql/create_tables_pedidos.sql") as f:
         query_create = f.read()
 
     print("Creating tables...")
