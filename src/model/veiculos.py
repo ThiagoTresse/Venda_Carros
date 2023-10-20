@@ -4,7 +4,7 @@ class Veiculo:
                  modelo:str=None,
                  cor:str=None,
                  anoCarro:int=None,
-                 chassiCarro:int=None,
+                 chassiCarro:str=None,
                  tipoCambio:str=None,
                  fabricante:str=None,
                  ):
@@ -29,7 +29,7 @@ class Veiculo:
     def get_anoCarro(self) -> int:
         return self.get_anoCarro
     
-    def get_chassiCarro(self) -> int:
+    def get_chassiCarro(self) -> str:
         return self.get_chassiCarro
     
     def get_tipoCambio(self) -> str:
@@ -49,7 +49,7 @@ class Veiculo:
     def set_cor(self, cor:str):
         self.cor = cor
 
-    def set_anoCarro(self, anoCarro:str):
+    def set_anoCarro(self, anoCarro:int):
         self.anoCarro = anoCarro
 
     def set_chassiCarro(self, chassiCarro:str):

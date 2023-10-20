@@ -1,7 +1,7 @@
 class Cliente:
     def __init__(self,
                  cpfCliente:str=None,
-                 idCliente:str=None, 
+                 idCliente:int=None, 
                  nome:str=None,
                  email:str=None,
                  telefone:int=None,
@@ -18,7 +18,7 @@ class Cliente:
     def get_cpfCliente(self) -> str:
         return self.cpfCliente
     
-    def get_idCliente(self) -> str:
+    def get_idCliente(self) -> int:
         return self.idCliente
 
     def get_nome(self) -> str:
@@ -35,7 +35,7 @@ class Cliente:
     
 #Setters
 
-    def set_idCliente(self, idCliente:str):
+    def set_idCliente(self, idCliente:int):
         self.idCliente = idCliente
 
     def set_nome(self, nome:str):
