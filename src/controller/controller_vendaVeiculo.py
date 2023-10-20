@@ -45,10 +45,10 @@ class Controller_Venda:
         # Executa o bloco PL/SQL anônimo para inserção do novo produto e recuperação da chave primária criada pela sequence
         cursor.execute("""
         begin
-            :idVenda := VENDA_CODIGO_SEQ.NEXTVAL;    
+            :idVenda := idVenda_SEQ.NEXTVAL;    
             insert into VendaVeiculo values(:idVenda, :valorVenda, :dataVenda, :idVendedor, :cpfCliente, :idCarro);
         end;
-        """, data) ################################################################################################################# REAJUSTAR DEPOIS QUE AS TABELAS SQL ESTIVEREM PRONTAS
+        """, data) 
         # Recupera o código da nova venda
         idVenda = output_value.getvalue()
         # Persiste (confirma) as alterações
@@ -70,14 +70,18 @@ class Controller_Venda:
         #Lista as vendas para serem alteradas
         '''listar_vendas=(self, oracle:OracleQueries, need_connect:bool=False):
         query = """
-                select c.cpfCliente,
-                c.idCliente,
-                c.nome,
-                c.email,
-                c.telefone,
-                c.endereco     
-                from clientes c
-                order by c.nome
+                select vend.idvenda,
+                vend.valorvenda,
+                vend.datavenda,
+                vend.idvendedor,
+                vend.cliente,  
+                vend.veiculo  
+                from venda vend
+                inner join clientes
+                on vend.cliente = c.cpfCliente
+                inner join veiculos
+                on vend.veiculo = veic.idCarro 
+                order by vend.idvenda
                 """
         if need_connect:
             oracle.connect()
