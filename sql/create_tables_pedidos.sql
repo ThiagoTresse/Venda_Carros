@@ -17,12 +17,12 @@ CREATE SEQUENCE idVenda_SEQ;
 
 /*Cria as tabelas*/
 CREATE TABLE LABDATABASE.Cliente (
-                cpfCliente VARCHAR(15) NOT NULL,
+                cpfCliente VARCHAR(11) NOT NULL,
                 idCliente NUMERIC NOT NULL,
                 nome VARCHAR(60) NOT NULL,
                 email VARCHAR(40) NOT NULL,
                 telefone NUMERIC NOT NULL,
-                endereco VARCHAR(255) NOT NULL,
+                endereco VARCHAR(100) NOT NULL,
                 CONSTRAINT Cliente_pk PRIMARY KEY (cpfCliente)
 );
 
@@ -45,7 +45,7 @@ CREATE TABLE LABDATABASE.VendaVeiculo (
                 dataVenda DATE NOT NULL,
                 idVendedor NUMERIC NOT NULL,
                 idCarro NUMERIC NOT NULL,
-                cpfCliente VARCHAR(15) NOT NULL,
+                cpfCliente VARCHAR(11) NOT NULL,
                 CONSTRAINT VendaVeiculo_pk PRIMARY KEY (idVenda)
 );
 
