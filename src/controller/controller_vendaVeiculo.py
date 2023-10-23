@@ -6,6 +6,7 @@ from controller_veiculo import Controller_Veiculo
 from model.Venda import VendaVeiculo
 from conexion.oracle_queries import OracleQueries
 from datetime import date
+import random
 
 class Controller_Venda:
     def __init__(self):
@@ -16,25 +17,37 @@ class Controller_Venda:
         ''' Ref.: https://cx-oracle.readthedocs.io/en/latest/user_guide/plsql_execution.html#anonymous-pl-sql-blocks'''
         
         # Cria uma nova conexão com o banco
-        oracle = OracleQueries()
-        
+        oracle = OracleQueries(can_write=True)
+        oracle.connect()
+
         # Lista os clientes existentes para inserir no pedido
         self.listar_clientes(oracle, need_connect=True)
-        cpfCliente = int(input("Digite o número do CPF do Cliente: "))
+        cpfCliente = int(input("Digite o número do CPF do Cliente para adicionar a Venda: "))
         Cliente = self.valida_cliente(oracle, cpfCliente)
         if Cliente == None:
             return None
 
         # Lista os Veiculos existentes para inserir no pedido
         self.listar_veiculos(oracle, need_connect=True)
-        idCarro = int(input("Digite o número do id do Veiculo: "))
+        idCarro = int(input("Digite o número do id do Veiculo para adicionar a Venda: "))
         Veiculo = self.valida_veiculo(oracle, idCarro)
         if Veiculo == None:
             return None
 
         data_hoje = date.today()
+        print("Data de hoje: " (data_hoje))
 
-        # Recupera o cursos para executar um bloco PL/SQL anônimo
+        if self.verifica_prevenda(oracle, cpfCliente, idCarro):
+            #Sistema gera a data da venda com a data de hoje
+            dataVenda = data_hoje
+            #Solicita ao usuario o valor da venda
+            valorVenda = input("Informe o valor da venda: ")
+            #Solicita ao usuario o id do vendedor
+            idVendedor = input("Informe o id do vendedor: ")
+            #Sistema gera um id de venda aleatorio
+            idVenda = random.randint(1000,9999)
+            print = ("o ID da Venda é: " (idVenda))
+        # Recupera o cursor para executar um bloco PL/SQL anônimo
         cursor = oracle.connect()
         # Cria a variável de saída com o tipo especificado
         output_value = cursor.var(int)
@@ -42,7 +55,7 @@ class Controller_Venda:
         # Cria um dicionário para mapear as variáveis de entrada e saída         
         data = dict(VendaVeiculo=output_value, dataVenda=data_hoje, idVenda=VendaVeiculo.get_idVenda(), valorVenda=VendaVeiculo.get_valorVenda(),
                     idVendedor=VendaVeiculo.get_idVendedor(),  cpfCliente=Cliente.get_cpfCliente(), idCarro=Veiculo.get_idCarro()) 
-        # Executa o bloco PL/SQL anônimo para inserção do novo produto e recuperação da chave primária criada pela sequence
+        # Executa o bloco PL/SQL anônimo para inserção da nova venda e recuperação da chave primária criada pela sequence
         cursor.execute("""
         begin
             :idVenda := idVenda_SEQ.NEXTVAL;    
@@ -56,7 +69,8 @@ class Controller_Venda:
         # Recupera os dados do novo pedido criado transformando em um DataFrame
         df_venda = oracle.sqlToDataFrame(f"select idVenda, valorVenda, dataVenda, idVendedor, cpfCliente, idCarro from vendaVeiculos where idVenda = {idVenda}")
         # Cria um novo objeto venda
-        nova_venda = VendaVeiculo(df_venda.idVenda.values[0], df_venda.valorVenda.values[0], df_venda.dataVenda.values[0], df_venda.idVendedor.values[0], df_venda.cpfCliente[0], df_venda.idCarro[0])
+        nova_venda = VendaVeiculo(df_venda.idVenda.values[0], df_venda.valorVenda.values[0], df_venda.dataVenda.values[0],
+                                   df_venda.idVendedor.values[0], df_venda.cpfCliente[0], df_venda.idCarro[0])
         # Exibe os atributos da nova venda
         print(nova_venda.to_string())
         # Retorna o objeto novo_pedido para utilização posterior, caso necessário
@@ -68,7 +82,7 @@ class Controller_Venda:
         oracle.connect()
 
         #Lista as vendas para serem alteradas
-        '''listar_vendas=(self, oracle:OracleQueries, need_connect:bool=False):
+        '''def listar_vendas(self, oracle:OracleQueries, need_connect:bool=False):
         query = """
                 select vend.idvenda,
                 vend.valorvenda,
@@ -85,7 +99,7 @@ class Controller_Venda:
                 """
         if need_connect:
             oracle.connect()
-        print(oracle.sqlToDataFrame(query))'''
+        print(oracle.sqlToDataFrame(query))''' 
 
         # Solicita ao usuário o código da venda a ser alterado
         idVenda = int(input("Insira o código da Venda que irá alterar: "))        
@@ -95,29 +109,42 @@ class Controller_Venda:
 
             # Lista os clientes existentes para inserir na venda
             self.listar_clientes(oracle)
-            cpfCliente = str(input("Digite o número do CPF do Cliente: "))
-            Cliente = self.valida_cliente(oracle, cpfCliente)
+            novo_cpfCliente = str(input("Digite o novo número do CPF do Cliente: "))
+
+            Cliente = self.valida_cliente(oracle, novo_cpfCliente)
             if Cliente == None:
                 return None
+          #  else:
+           #     oracle.write(f"update VendaVeiculo set cpfCliente = '{novo_cpfCliente} where cpfCliente")
 
             # Lista os veiculos existentes para inserir na venda
             self.listar_veiculos(oracle)
-            idCarro = str(input("Digite o codigo do Veiculo: "))
-            Veiculo = self.valida_veiculo(oracle, idCarro)
+            novo_idCarro = str(input("Digite o novo codigo do Veiculo: "))
+            Veiculo = self.valida_veiculo(oracle, novo_idCarro)
             if Veiculo == None:
                 return None
+            else:
+                oracle.write(f"update VendaVeiculo set idCarro = '{novo_idCarro} where cpfCliente = {idVenda}")
 
-            data_hoje = date.today()
-
-            # Atualiza a descrição do produto existente
-            oracle.write(f"update VendaVeiculo set idVenda = '{VendaVeiculo.get_idVenda}', valorVenda= '{VendaVeiculo.get_valorVenda}', dataVenda= '{VendaVeiculo.get_dataVenda}, idVendedor= '{VendaVeiculo.get_idVendedor}', Cliente='{VendaVeiculo.get_cliente} where idVenda = {idVenda}")
-            # Recupera os dados do novo produto criado transformando em um DataFrame
+            #Solicita ao usuario o novo valor da venda
+            novo_valorVenda = input("Informe o valor da venda: ")
+            #atualiza o valor da venda
+            oracle.write(f"update VendaVeiculo set valorVenda = '{novo_valorVenda} where idVenda = {idVenda}")
+            #Solicita ao usuario o novo id do vendedor
+            novo_idVendedor = input("Informe o id do vendedor: ")
+            #atualiza o id do vendedor da venda
+            oracle.write(f"update VendaVeiculo set idVendedor = '{novo_idVendedor} where idVenda = {idVenda}")
+            # Atualiza a data da venda
+            nova_dataVenda = input("informe a nova data da venda: ")
+            #atualiza nova data da venda
+            oracle.write(f"update VendaVeiculo set dataVenda = '{nova_dataVenda} where idVenda = {idVenda}")
+            # Recupera os dados da nova venda criada transformando em um DataFrame
             df_venda = oracle.sqlToDataFrame(f"select VendaVeiculos  idVenda, valorVenda, dataVenda, idVendedor, cpfCliente, idCarro from VendaVeiculo where idVenda = {idVenda}")
-            # Cria um novo objeto Produto
+            # Cria um novo objeto venda
             venda_atualizada = VendaVeiculo(df_venda.idVenda.values[0], df_venda.valorVenda.values[0], df_venda.dataVenda.values[0], df_venda.idVendedor.values[0], df_venda.cpfCliente[0], df_venda.idCarro[0])
-            # Exibe os atributos do novo produto
+            # Exibe os atributos da nova venda
             print(venda_atualizada.to_string())
-            # Retorna o objeto pedido_atualizado para utilização posterior, caso necessário
+            # Retorna o objeto venda_atualizado para utilização posterior, caso necessário
             return venda_atualizada
         else:
             print(f"O id {idVenda} não existe.")
@@ -155,10 +182,14 @@ class Controller_Venda:
         else:
             print(f"O id {idVenda} não existe.")
 
+    def verifica_prevenda(self, oracle:OracleQueries, cpfCliente:int-None, idVeiculo:int= None ) -> VendaVeiculo:
+        df.venda = oracle.sqlToDataFrame(f"")
+        return
+    
     def verifica_existencia_venda(self, oracle:OracleQueries, idVenda:int=None) -> bool:
         # Recupera os dados do novo pedido criado transformando em um DataFrame
-        df_pedido = oracle.sqlToDataFrame(f"select idVenda, dataVenda from Venda where idVenda = {idVenda}")
-        return df_pedido.empty
+        df_venda = oracle.sqlToDataFrame(f"select idVenda, dataVenda from Venda where idVenda = {idVenda}")
+        return df_venda.empty
 
     def listar_clientes(self, oracle:OracleQueries, need_connect:bool=False):
         query = """
@@ -201,7 +232,8 @@ class Controller_Venda:
             # Recupera os dados do novo cliente criado transformando em um DataFrame
             df_cliente = oracle.sqlToDataFrame(f"select cpfCliente, idCliente, nome, email, telefone, endereco from clientes where cpfCliente = '{cpfCliente}'")
             # Cria um novo objeto cliente
-            cliente = Cliente(df_cliente.cpf.values[0], df_cliente.nome.values[0])
+            cliente = Cliente(df_cliente.cpfCliente.values[0], df_cliente.idCliente.values[0], df_cliente.nome.values[0], df_cliente.email.values[0], 
+                              df_cliente.telefone.values[0], df_cliente.endereco.values[0])
             return cliente
 
     def valida_veiculo(self, oracle:OracleQueries, idCarro:str=None) -> Veiculo:
@@ -210,9 +242,9 @@ class Controller_Venda:
             return None
         else:
             oracle.connect()
-            # Recupera os dados do novo fornecedor criado transformando em um DataFrame
+            # Recupera os dados de uma nova venda criada transformando o em um DataFrame
             df_veiculo = oracle.sqlToDataFrame(f"select idCarro, novo_modelo, nova_cor, novo_ano, novo_chassiCarro, novo_tipoCambio, novo_fabricante from veiculos where idCarro = {idCarro}")
-            # Cria um novo objeto fornecedor
+            # Cria um novo objeto venda
             veiculo = Veiculo(df_veiculo.idCarro.values[0], df_veiculo.modelo.values[0], df_veiculo.cor.values[0], df_veiculo.anoCarro.values[0], df_veiculo.chassiCarro.values[0],
                                          df_veiculo.tipoCambio.values[0], df_veiculo.fabricante.values[0], )
             return veiculo
