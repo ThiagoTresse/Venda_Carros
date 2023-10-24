@@ -1,8 +1,8 @@
 from pydoc import cli
 from model.clientes import Cliente
-from controller_cliente import Controller_Cliente
+from controller.controller_cliente import Controller_Cliente
 from model.veiculos import Veiculo
-from controller_veiculo import Controller_Veiculo
+from controller.controller_veiculo import Controller_Veiculo
 from model.Venda import VendaVeiculo
 from conexion.oracle_queries import OracleQueries
 from datetime import date
@@ -182,9 +182,9 @@ class Controller_Venda:
         else:
             print(f"O id {idVenda} não existe.")
 
-    def verifica_prevenda(self, oracle:OracleQueries, cpfCliente:int-None, idVeiculo:int= None ) -> VendaVeiculo:
-        df.venda = oracle.sqlToDataFrame(f"")
-        return
+    def verifica_prevenda(self, oracle:OracleQueries, cpfCliente:int=None, idVeiculo:int= None ) -> VendaVeiculo:
+        df_venda = oracle.sqlToDataFrame(f"select cpfCliente, idVeiculo from VendaVeiculo where idVenda = {idVenda}") ####### MEXER***
+        return df_venda.empty
     
     def verifica_existencia_venda(self, oracle:OracleQueries, idVenda:int=None) -> bool:
         # Recupera os dados do novo pedido criado transformando em um DataFrame
