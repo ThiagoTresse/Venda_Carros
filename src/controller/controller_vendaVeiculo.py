@@ -54,7 +54,7 @@ class Controller_Venda:
 
         # Cria um dicionário para mapear as variáveis de entrada e saída         
         data = dict(VendaVeiculo=output_value, dataVenda=data_hoje, idVenda=VendaVeiculo.get_idVenda(), valorVenda=VendaVeiculo.get_valorVenda(),
-                    idVendedor=VendaVeiculo.get_idVendedor(),  cpfCliente=Cliente.get_cpfCliente(), idCarro=Veiculo.get_idCarro()) 
+                    idVendedor=VendaVeiculo.get_idVendedor(),  cpfCliente=VendaVeiculo.get_cpfCliente(), idCarro=VendaVeiculo.get_idCarro()) 
         # Executa o bloco PL/SQL anônimo para inserção da nova venda e recuperação da chave primária criada pela sequence
         cursor.execute("""
         begin
@@ -182,8 +182,8 @@ class Controller_Venda:
         else:
             print(f"O id {idVenda} não existe.")
 
-    def verifica_prevenda(self, oracle:OracleQueries, cpfCliente:int=None, idVeiculo:int= None ) -> VendaVeiculo:
-        df_venda = oracle.sqlToDataFrame(f"select cpfCliente, idVeiculo from VendaVeiculo where idVenda = {idVenda}") ####### MEXER***
+    def verifica_prevenda(self, oracle:OracleQueries, cpfCliente:int=None, idVeiculo:int= None, idVenda:bool=False ) -> bool:
+        df_venda = oracle.sqlToDataFrame(f"select idVenda from VendaVeiculo where cpfCliente and idVeiculo  = {idVenda}")
         return df_venda.empty
     
     def verifica_existencia_venda(self, oracle:OracleQueries, idVenda:int=None) -> bool:
