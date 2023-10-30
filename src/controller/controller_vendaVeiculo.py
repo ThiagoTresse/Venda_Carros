@@ -35,7 +35,7 @@ class Controller_Venda:
             return None
 
         data_hoje = date.today()
-        print("Data de hoje: " (data_hoje))
+        print("Data de hoje: ", data_hoje)
 
         if self.verifica_prevenda(oracle, cpfCliente, idCarro):
             #Sistema gera a data da venda com a data de hoje
@@ -199,7 +199,7 @@ class Controller_Venda:
                 c.email,
                 c.telefone,
                 c.endereco     
-                from clientes c
+                from cliente c
                 order by c.nome
                 """
         if need_connect:
@@ -215,7 +215,7 @@ class Controller_Venda:
                 veic.chassiCarro,
                 veic.tipoCambio,
                 veic.fabricante
-                from veiculos veic
+                from veiculo veic
                 order by veic.modelo
                 """
         if need_connect:
