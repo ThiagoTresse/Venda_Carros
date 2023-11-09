@@ -35,7 +35,8 @@ class SplashScreen:
         oracle = OracleQueries()
         oracle.connect()
         # Retorna o total de registros computado pela query
-        return oracle.sqlToDataFrame(self.qry_total_VendaVeiculo)["total_VendaVeiculo"].values[0]
+        print(oracle.sqlToDataFrame(self.qry_total_VendaVeiculo))
+        return oracle.sqlToDataFrame(self.qry_total_VendaVeiculo)["total_vendaveiculo"].values[0]
 
     def get_updated_screen(self):
         return f"""
