@@ -5,5 +5,5 @@ select veic.idCarro,
        veic.chassiCarro,
        veic.tipoCambio,
        veic.fabricante
-  from veiculos veic
+  from LABDATABASE.Veiculo veic
  order by veic.modelo

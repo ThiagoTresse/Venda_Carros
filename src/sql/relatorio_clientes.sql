@@ -4,5 +4,5 @@ select c.cpfCliente,
        c.email,
        c.telefone,
        c.endereco     
-  from clientes c
+  from LABDATABASE.Cliente c
  order by c.nome
