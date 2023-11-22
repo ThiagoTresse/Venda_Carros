@@ -12,5 +12,4 @@ INNER JOIN
 INNER JOIN
     LABDATABASE.Veiculo veic ON vend.idCarro = veic.idCarro 
 ORDER BY
-    vend.idvenda;
-
+    vend.idvenda
