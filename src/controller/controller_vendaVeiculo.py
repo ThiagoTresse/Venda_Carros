@@ -156,12 +156,12 @@ class Controller_Venda:
         oracle.connect()
 
         # Solicita ao usuário o código do produto a ser alterado
-        idVenda = int(input("ID da venda que deseja exclir: "))        
+        idVenda = int(input("ID da venda que deseja excluir: "))        
 
         # Verifica se o produto existe na base de dados
         if not self.verifica_existencia_venda(oracle, idVenda):            
             # Recupera os dados do novo produto criado transformando em um DataFrame
-            df_venda = oracle.sqlToDataFrame(f"select VendaVeiculos  idVenda, valorVenda, dataVenda, idVendedor, cpfCliente, idCarro from VendaVeiculo where idVenda = {idVenda}")
+            df_venda = oracle.sqlToDataFrame(f"select VendaVeiculos idVenda, valorVenda, dataVenda, idVendedor, cpfCliente, idCarro from LABDATABASE.VendaVeiculo where idVenda = {idVenda}")
             #Cliente = self.valida_cliente(oracle, df_venda.idCliente.values[0])
             #Veiculo = self.valida_veiculo(oracle, df_venda.idCarro.values[0])
             
@@ -171,11 +171,11 @@ class Controller_Venda:
                 opcao_excluir = input(f"Tem certeza que deseja excluir o pedido {idVenda} [S ou N]: ")
                 if opcao_excluir.lower() == "s":
                     # Revome o produto da tabela
-                    oracle.write(f"delete from VendaVeiculo where idVenda = {idVenda}")
+                    oracle.write(f"delete from LABDATABASE.VendaVeiculo where idVenda = {idVenda}")
                     print("Venda removida com sucesso!")
-                    oracle.write(f"delete from VendaVeiculo where idVenda = {idVenda}")
+                    oracle.write(f"delete from LABDATABASE.VendaVeiculo where idVenda = {idVenda}")
                     # Cria um novo objeto Venda para informar que foi removido
-                    venda_excluida = VendaVeiculo(df_venda.idVenda.values[0], df_venda.valorVenda.values[0], df_venda.dataVenda.values[0], df_venda.idVendedor.values[0], df_venda.cpfCliente[0], df_venda.idCarro[0])
+                    venda_excluida = VendaVeiculo(df_venda.idVenda.values[0], df_venda.valorvenda.values[0], df_venda.datavenda.values[0], df_venda.idvendedor.values[0], df_venda.cpfcliente[0], df_venda.idcarro[0])
                     # Exibe os atributos do produto excluído
                     print("Venda Removida com Sucesso!")
                     print(venda_excluida.to_string())
@@ -183,12 +183,12 @@ class Controller_Venda:
             print(f"O id {idVenda} não existe.")
 
     def verifica_prevenda(self, oracle:OracleQueries, cpfCliente:int=None, idVeiculo:int= None, idVenda:bool=False ) -> bool:
-        df_venda = oracle.sqlToDataFrame(f"select idVenda from VendaVeiculo where cpfCliente and idVeiculo  = {idVenda}")
+        df_venda = oracle.sqlToDataFrame(f"select idVenda from LABDATABASE.VendaVeiculo where cpfCliente and idVeiculo  = {idVenda}")
         return df_venda.empty
     
     def verifica_existencia_venda(self, oracle:OracleQueries, idVenda:int=None) -> bool:
         # Recupera os dados do novo pedido criado transformando em um DataFrame
-        df_venda = oracle.sqlToDataFrame(f"select idVenda, dataVenda from Venda where idVenda = {idVenda}")
+        df_venda = oracle.sqlToDataFrame(f"select idVenda, dataVenda from LABDATABASE.VendaVeiculo where idVenda = {idVenda}")
         return df_venda.empty
 
     def listar_clientes(self, oracle:OracleQueries, need_connect:bool=False):
@@ -199,7 +199,7 @@ class Controller_Venda:
                 c.email,
                 c.telefone,
                 c.endereco     
-                from cliente c
+                from LABDATABASE.Cliente c
                 order by c.nome
                 """
         if need_connect:
@@ -215,7 +215,7 @@ class Controller_Venda:
                 veic.chassiCarro,
                 veic.tipoCambio,
                 veic.fabricante
-                from veiculo veic
+                from LABDATABASE.Veiculo veic
                 order by veic.modelo
                 """
         if need_connect:
@@ -230,10 +230,10 @@ class Controller_Venda:
         else:
             oracle.connect()
             # Recupera os dados do novo cliente criado transformando em um DataFrame
-            df_cliente = oracle.sqlToDataFrame(f"select cpfCliente, idCliente, nome, email, telefone, endereco from clientes where cpfCliente = '{cpfCliente}'")
-            # Cria um novo objeto cliente
-            cliente = Cliente(df_cliente.cpfCliente.values[0], df_cliente.idCliente.values[0], df_cliente.nome.values[0], df_cliente.email.values[0], 
-                              df_cliente.telefone.values[0], df_cliente.endereco.values[0])
+            df_cliente = oracle.sqlToDataFrame(f"select cpfCliente, idCliente, nome, email, telefone, endereco from LABDATABASE.Cliente where cpfCliente = '{cpfCliente}'")
+            # Cria um novo objeto Cliente
+            cliente = Cliente(df_cliente.cpfcliente.values[0], df_cliente.idcliente.values[0], df_cliente.nome.values[0], df_cliente.email.values[0],
+                                    df_cliente.telefone.values[0], df_cliente.endereco.values[0])
             return cliente
 
     def valida_veiculo(self, oracle:OracleQueries, idCarro:str=None) -> Veiculo:
@@ -243,8 +243,8 @@ class Controller_Venda:
         else:
             oracle.connect()
             # Recupera os dados de uma nova venda criada transformando o em um DataFrame
-            df_veiculo = oracle.sqlToDataFrame(f"select idCarro, novo_modelo, nova_cor, novo_ano, novo_chassiCarro, novo_tipoCambio, novo_fabricante from veiculos where idCarro = {idCarro}")
+            df_veiculo = oracle.sqlToDataFrame(f"select idCarro, modelo, cor, ano, chassiCarro, tipoCambio, fabricante from LABDATABASE.VendaVeiculo where idCarro = {idCarro}")
             # Cria um novo objeto venda
-            veiculo = Veiculo(df_veiculo.idCarro.values[0], df_veiculo.modelo.values[0], df_veiculo.cor.values[0], df_veiculo.anoCarro.values[0], df_veiculo.chassiCarro.values[0],
-                                         df_veiculo.tipoCambio.values[0], df_veiculo.fabricante.values[0], )
+            veiculo = Veiculo(df_veiculo.idcarro.values[0], df_veiculo.modelo.values[0], df_veiculo.cor.values[0], df_veiculo.anocarro.values[0], df_veiculo.chassicarro.values[0],
+                                         df_veiculo.tipocambio.values[0], df_veiculo.fabricante.values[0], )
             return veiculo
