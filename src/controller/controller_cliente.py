@@ -71,7 +71,7 @@ class Controller_Cliente:
             # Recupera os dados do novo cliente criado transformando em um DataFrame
             df_cliente = oracle.sqlToDataFrame(f"select cpfCliente, idCliente, nome, email, telefone, endereco from LABDATABASE.Cliente where cpfCliente = {cpfCliente}")
             # Cria um novo objeto cliente
-            cliente_atualizado = Cliente(df_cliente.cpfCliente.values[0], df_cliente.idCliente.values[0], df_cliente.nome.values[0],
+            cliente_atualizado = Cliente(df_cliente.cpfcliente.values[0], df_cliente.idcliente.values[0], df_cliente.nome.values[0],
                             df_cliente.email.values[0], df_cliente.telefone.values[0], df_cliente.endereco.values[0])
             # Exibe os atributos do novo cliente
             print(cliente_atualizado.to_string())
@@ -96,7 +96,7 @@ class Controller_Cliente:
             # Revome o cliente da tabela
             oracle.write(f"delete from LABDATABASE.Cliente where cpfCliente = {cpfCliente}")            
             # Cria um novo objeto Cliente para informar que foi removido
-            cliente_excluido = Cliente(df_cliente.cpfCliente.values[0], df_cliente.idCliente.values[0], df_cliente.nome.values[0],
+            cliente_excluido = Cliente(df_cliente.cpfcliente.values[0], df_cliente.idcliente.values[0], df_cliente.nome.values[0],
                             df_cliente.email.values[0], df_cliente.telefone.values[0], df_cliente.endereco.values[0])
             # Exibe os atributos do cliente excluído
             print("Cliente Removido com Sucesso!")

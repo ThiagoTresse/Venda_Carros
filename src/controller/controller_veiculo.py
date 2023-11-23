@@ -32,7 +32,6 @@ class Controller_Veiculo:
             oracle.write(f"insert into LABDATABASE.Veiculo values ('{idCarro}', '{modelo}', '{cor}', '{anoCarro}', '{chassiCarro}', '{tipoCambio}', '{fabricante}' )")
             # Recupera os dados do novo veiculo criado transformando em um DataFrame
             df_veiculo = oracle.sqlToDataFrame(f"select idCarro, modelo, cor, anoCarro, chassiCarro, tipoCambio, fabricante from LABDATABASE.Veiculo where idCarro = '{idCarro}'")
-            print(df_veiculo)
             # Cria um novo objeto Veiculo
             novo_Veiculo = Veiculo(df_veiculo.idcarro.values[0], df_veiculo.modelo.values[0], df_veiculo.cor.values[0],
                             df_veiculo.anocarro.values[0], df_veiculo.chassicarro.values[0], df_veiculo.tipocambio.values[0], df_veiculo.fabricante.values[0])
@@ -81,8 +80,8 @@ class Controller_Veiculo:
             # Recupera os dados do novo produto criado transformando em um DataFrame
             df_veiculo = oracle.sqlToDataFrame(f"select idCarro, novo_modelo, nova_cor, novo_ano, novo_chassiCarro, novo_tipoCambio, novo_fabricante from LABDATABASE.Veiculo where idCarro = {idCarro}")
             # Cria um novo objeto Veiculo
-            veiculo_atualizado = Veiculo(df_veiculo.idCarro.values[0], df_veiculo.modelo.values[0], df_veiculo.cor.values[0], df_veiculo.anoCarro.values[0], df_veiculo.chassiCarro.values[0],
-                                         df_veiculo.tipoCambio.values[0], df_veiculo.fabricante.values[0], )
+            veiculo_atualizado = Veiculo(df_veiculo.idcarro.values[0], df_veiculo.modelo.values[0], df_veiculo.cor.values[0], df_veiculo.anocarro.values[0], df_veiculo.chassicarro.values[0],
+                                         df_veiculo.tipocambio.values[0], df_veiculo.fabricante.values[0] )
             # Exibe os atributos do novo veiculo
             print(veiculo_atualizado.to_string())
             # Retorna o objeto produto_atualizado para utilização posterior, caso necessário
@@ -106,8 +105,8 @@ class Controller_Veiculo:
             # Remove o veiculo da tabela
             oracle.write(f"delete from LABDATABASE.Veiculo where idCarro = {idCarro}")            
             # Cria um novo objeto Veiculo para informar que foi removido
-            veiculo_excluido = Veiculo(df_veiculo.idCarro.values[0], df_veiculo.modelo.values[0], df_veiculo.cor.values[0], df_veiculo.anoCarro.values[0], df_veiculo.chassiCarro.values[0],
-                                         df_veiculo.tipoCambio.values[0], df_veiculo.fabricante.values[0], )
+            veiculo_excluido = Veiculo(df_veiculo.idcarro.values[0], df_veiculo.modelo.values[0], df_veiculo.cor.values[0], df_veiculo.anocarro.values[0], df_veiculo.chassicarro.values[0],
+                                         df_veiculo.tipocambio.values[0], df_veiculo.fabricante.values[0] )
             # Exibe os atributos do veiculo excluído
             print("Veiculo Removido com Sucesso!")
             print(veiculo_excluido.to_string())
