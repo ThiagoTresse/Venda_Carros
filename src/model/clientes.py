@@ -42,7 +42,7 @@ class Cliente:
         self.nome = nome
 
     def set_cpfCliente(self, cpfCliente:str):
-        self.cpf = cpfCliente
+        self.cpfCliente = cpfCliente
 
     def set_email(self, email:str):
         self.email = email
@@ -55,4 +55,4 @@ class Cliente:
 
 #ToString
     def to_string(self) -> str:
-        return f"cpf: {self.get_cpfCliente()} | Nome: {self.get_nome()}| email: {self.get_email()}|  telefone: {self.get_telefone()}| endereco: {self.get_endereco()}"
+        return f"cpfCliente: {self.get_cpfCliente()} | Nome: {self.get_nome()}| email: {self.get_email()}|  telefone: {self.get_telefone()}| endereco: {self.get_endereco()}"

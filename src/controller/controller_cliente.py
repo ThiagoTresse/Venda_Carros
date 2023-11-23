@@ -28,11 +28,11 @@ class Controller_Cliente:
             endereco = input("endereco (Novo): ")
             
             # Insere e persiste o novo cliente
-            oracle.write(f"insert into LABDATABASE.Cliente values ('{cpfCliente}', '{idCliente}', '{nome})', '{email}', '{telefone}', '{endereco}' ")
+            oracle.write(f"insert into LABDATABASE.Cliente values ('{cpfCliente}', '{idCliente}', '{nome}', '{email}', '{telefone}', '{endereco}' )")
             # Recupera os dados do novo cliente criado transformando em um DataFrame
             df_cliente = oracle.sqlToDataFrame(f"select cpfCliente, idCliente, nome, email, telefone, endereco from LABDATABASE.Cliente where cpfCliente = '{cpfCliente}'")
             # Cria um novo objeto Cliente
-            novo_cliente = Cliente(df_cliente.cpfCliente.values[0], df_cliente.idCliente.values[0], df_cliente.nome.values[0], df_cliente.email.values[0],
+            novo_cliente = Cliente(df_cliente.cpfcliente.values[0], df_cliente.idcliente.values[0], df_cliente.nome.values[0], df_cliente.email.values[0],
                                     df_cliente.telefone.values[0], df_cliente.endereco.values[0])
             # Exibe os atributos do novo cliente
             print(novo_cliente.to_string())

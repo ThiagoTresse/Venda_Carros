@@ -18,25 +18,25 @@ class Veiculo:
 
 #Getters
     def get_idCarro(self) -> int:
-        return self.get_idCarro
+        return self.idCarro
 
     def get_modelo(self) -> str:
-        return self.get_modelo
+        return self.modelo
     
     def get_cor(self) -> str:
-        return self.get_cor
+        return self.cor
     
     def get_anoCarro(self) -> int:
-        return self.get_anoCarro
+        return self.anoCarro
     
     def get_chassiCarro(self) -> str:
-        return self.get_chassiCarro
+        return self.chassiCarro
     
     def get_tipoCambio(self) -> str:
-        return self.get_tipoCambio
+        return self.tipoCambio
     
     def get_fabricante(self) -> str:
-        return self.get_fabricante
+        return self.fabricante
 
 #Setters
 
@@ -64,4 +64,4 @@ class Veiculo:
     
 
     def to_string(self) -> str:
-        return f"idCarro: {self.get_idCarro()} | modelo: {self.get_modelo()}| cor: {self.get_cor()} | anoCarro: {self.get_anoCarro()} | chassiCarro: {self.get_chassiCarro()} | tipoCambio: {self.get_tipoCambio()} | fabricante: {self.get_fabricante()}"
+        return f"idCarro: {self.get_idCarro()} | modelo: {self.get_modelo()} | cor: {self.get_cor()} | anoCarro: {self.get_anoCarro()} | chassiCarro: {self.get_chassiCarro()} | tipoCambio: {self.get_tipoCambio()} | fabricante: {self.get_fabricante()}"

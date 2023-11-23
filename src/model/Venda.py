@@ -44,10 +44,10 @@ class VendaVeiculo:
         self.valorVenda = valorVenda
 
     def set_dataVenda(self, dataVenda: date):
-        self.datavenda(self, dataVenda)
+        self.datavenda = dataVenda
 
     def set_idVendedor(self, idVendedor: int):
-        self.idVendedor(self, idVendedor)
+        self.idVendedor = idVendedor
 
     def set_cliente(self, cliente: Cliente):
         self.cliente = cliente
