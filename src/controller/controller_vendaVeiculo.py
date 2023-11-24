@@ -35,7 +35,7 @@ class Controller_Venda:
             return None
 
         data_hoje = date.today()
-        print("Data de hoje: ", data_hoje)
+        #print("Data de hoje: ", data_hoje)
 
         if self.verifica_prevenda(oracle, cpfCliente, idCarro):
             #Sistema gera a data da venda com a data de hoje
@@ -183,7 +183,7 @@ class Controller_Venda:
             print(f"O id {idVenda} não existe.")
 
     def verifica_prevenda(self, oracle:OracleQueries, cpfCliente:int=None, idVeiculo:int= None, idVenda:bool=False ) -> bool:
-        df_venda = oracle.sqlToDataFrame(f"select idVenda from LABDATABASE.VendaVeiculo where cpfCliente and idVeiculo  = {idVenda}")
+        df_venda = oracle.sqlToDataFrame(f"select idVenda from LABDATABASE.VendaVeiculo where cpfCliente and idVeiculo  = {cpfCliente} {idVeiculo}")
         return df_venda.empty
     
     def verifica_existencia_venda(self, oracle:OracleQueries, idVenda:int=None) -> bool:
@@ -230,7 +230,7 @@ class Controller_Venda:
         else:
             oracle.connect()
             # Recupera os dados do novo cliente criado transformando em um DataFrame
-            df_cliente = oracle.sqlToDataFrame(f"select cpfCliente, idCliente, nome, email, telefone, endereco from LABDATABASE.Cliente where cpfCliente = '{cpfCliente}'")
+            df_cliente = oracle.sqlToDataFrame(f"select cpfCliente, idCliente, nome, email, telefone, endereco from LABDATABASE.Cliente where cpfCliente = {cpfCliente}")
             # Cria um novo objeto Cliente
             cliente = Cliente(df_cliente.cpfcliente.values[0], df_cliente.idcliente.values[0], df_cliente.nome.values[0], df_cliente.email.values[0],
                                     df_cliente.telefone.values[0], df_cliente.endereco.values[0])
@@ -243,8 +243,8 @@ class Controller_Venda:
         else:
             oracle.connect()
             # Recupera os dados de uma nova venda criada transformando o em um DataFrame
-            df_veiculo = oracle.sqlToDataFrame(f"select idCarro, modelo, cor, ano, chassiCarro, tipoCambio, fabricante from LABDATABASE.VendaVeiculo where idCarro = {idCarro}")
+            df_veiculo = oracle.sqlToDataFrame(f"select idCarro, modelo, cor, anoCarro, chassiCarro, tipoCambio, fabricante from LABDATABASE.Veiculo where idCarro = {idCarro}")
             # Cria um novo objeto venda
             veiculo = Veiculo(df_veiculo.idcarro.values[0], df_veiculo.modelo.values[0], df_veiculo.cor.values[0], df_veiculo.anocarro.values[0], df_veiculo.chassicarro.values[0],
-                                         df_veiculo.tipocambio.values[0], df_veiculo.fabricante.values[0], )
+                                         df_veiculo.tipocambio.values[0], df_veiculo.fabricante.values[0])
             return veiculo

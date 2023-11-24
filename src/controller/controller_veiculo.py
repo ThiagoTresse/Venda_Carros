@@ -56,29 +56,25 @@ class Controller_Veiculo:
             # Solicita o novo modelo do veiculo
             novo_modelo = input("modelo (Novo): ")
             # Atualiza o modelo do veiculo existente
-            oracle.write(f"update LABDATABASE.Veiculo set modelo = '{novo_modelo}' where idCarro = {idCarro}")
             # Solicita ao usuario a nova cor do veiculo
             nova_cor = input("cor (Novo): ")
             # Atualiza a cor do veiculo existente
-            oracle.write(f"update LABDATABASE.Veiculo set cor = '{nova_cor}' where idCarro = {idCarro}")
             # Solicita ao usuario o novo ano do veiculo
             novo_ano = input("ano (Novo): ")
             # Atualiza o ano do veiculo existente
-            oracle.write(f"update LABDATABASE.Veiculo set anoCarro = '{novo_ano}' where idCarro = {idCarro}")
             # Solicita ao usuario o novo chassi do veiculo
             novo_chassiCarro = input("chassi (Novo): ")
             # Atualiza o chassi existente
-            oracle.write(f"update LABDATABASE.veiculo set chassiCarro = '{novo_chassiCarro}' where idCarro = {idCarro}")
             # Solicita o novo cambio do veiculo
             novo_tipoCambio = input("cambio (Novo): ")
             # Atualiza o cambio do veiculo existente
-            oracle.write(f"update LABDATABASE.Veiculo set tipoCambio = '{novo_tipoCambio}' where idCarro = {idCarro}")
             # Solicita o novo fabricante do veiculo
             novo_fabricante = input("fabricante (Novo): ")
             # Atualiza o fabricante do veiculo existente
-            oracle.write(f"update LABDATABASE.Veiculo set fabricante = '{novo_fabricante}' where idCarro = {idCarro}")
+            oracle.write(f"""update LABDATABASE.Veiculo set modelo = '{novo_modelo}', cor = '{nova_cor}', anoCarro = '{novo_ano}', chassiCarro = '{novo_chassiCarro}',
+                          tipoCambio = '{novo_tipoCambio}', fabricante = '{novo_fabricante}' where idCarro = {idCarro}""")
             # Recupera os dados do novo produto criado transformando em um DataFrame
-            df_veiculo = oracle.sqlToDataFrame(f"select idCarro, novo_modelo, nova_cor, novo_ano, novo_chassiCarro, novo_tipoCambio, novo_fabricante from LABDATABASE.Veiculo where idCarro = {idCarro}")
+            df_veiculo = oracle.sqlToDataFrame(f"select idCarro, modelo, cor, anoCarro, chassiCarro, tipoCambio, fabricante from LABDATABASE.Veiculo where idCarro = {idCarro}")
             # Cria um novo objeto Veiculo
             veiculo_atualizado = Veiculo(df_veiculo.idcarro.values[0], df_veiculo.modelo.values[0], df_veiculo.cor.values[0], df_veiculo.anocarro.values[0], df_veiculo.chassicarro.values[0],
                                          df_veiculo.tipocambio.values[0], df_veiculo.fabricante.values[0] )
