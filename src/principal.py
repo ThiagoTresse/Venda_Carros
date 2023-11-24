@@ -55,7 +55,7 @@ def excluir(opcao_excluir:int=0):
 
 def run():
     print(tela_inicial.get_updated_screen())
-    config.clear_console()
+    config.clear_console(2)
 
     while True:
         print(config.MENU_PRINCIPAL)

@@ -22,7 +22,7 @@ class Controller_Venda:
 
         # Lista os clientes existentes para inserir no pedido
         self.listar_clientes(oracle, need_connect=True)
-        cpfCliente = int(input("Digite o número do CPF do Cliente para adicionar a Venda: "))
+        cpfCliente = str(input("Digite o número do CPF do Cliente para adicionar a Venda: "))
         Cliente = self.valida_cliente(oracle, cpfCliente)
         if Cliente == None:
             return None
@@ -39,38 +39,21 @@ class Controller_Venda:
 
         if self.verifica_prevenda(oracle, cpfCliente, idCarro):
             #Sistema gera a data da venda com a data de hoje
-            dataVenda = data_hoje
+            dataVenda = input("Informe a data da venda: ")
             #Solicita ao usuario o valor da venda
             valorVenda = input("Informe o valor da venda: ")
             #Solicita ao usuario o id do vendedor
             idVendedor = input("Informe o id do vendedor: ")
             #Sistema gera um id de venda aleatorio
             idVenda = random.randint(1000,9999)
-            print = ("o ID da Venda é: " (idVenda))
-        # Recupera o cursor para executar um bloco PL/SQL anônimo
-        cursor = oracle.connect()
-        # Cria a variável de saída com o tipo especificado
-        output_value = cursor.var(int)
-
-        # Cria um dicionário para mapear as variáveis de entrada e saída         
-        data = dict(VendaVeiculo=output_value, dataVenda=data_hoje, idVenda=VendaVeiculo.get_idVenda(), valorVenda=VendaVeiculo.get_valorVenda(),
-                    idVendedor=VendaVeiculo.get_idVendedor(),  cpfCliente=VendaVeiculo.get_cpfCliente(), idCarro=VendaVeiculo.get_idCarro()) 
-        # Executa o bloco PL/SQL anônimo para inserção da nova venda e recuperação da chave primária criada pela sequence
-        cursor.execute("""
-        begin
-            :idVenda := idVenda_SEQ.NEXTVAL;    
-            insert into VendaVeiculo values(:idVenda, :valorVenda, :dataVenda, :idVendedor, :cpfCliente, :idCarro);
-        end;
-        """, data) 
-        # Recupera o código da nova venda
-        idVenda = output_value.getvalue()
-        # Persiste (confirma) as alterações
-        oracle.conn.commit()
+            print(f"O numero do ID da Venda é {idVenda}")
+       # Grava os dados da nova Venda
+        oracle.write(f"insert into LABDATABASE.VendaVeiculo values ('{cpfCliente}', '{idCarro}', TO_DATE('{dataVenda}''DD-MM-YYYY'), '{valorVenda}', '{idVendedor}', '{idVenda}')")
         # Recupera os dados do novo pedido criado transformando em um DataFrame
-        df_venda = oracle.sqlToDataFrame(f"select idVenda, valorVenda, dataVenda, idVendedor, cpfCliente, idCarro from vendaVeiculos where idVenda = {idVenda}")
+        df_venda = oracle.sqlToDataFrame(f"select idVenda, valorVenda, dataVenda, idVendedor, cpfCliente, idCarro from LABDATABASE.VendaVeiculo where idVenda = {idVenda}")
         # Cria um novo objeto venda
-        nova_venda = VendaVeiculo(df_venda.idVenda.values[0], df_venda.valorVenda.values[0], df_venda.dataVenda.values[0],
-                                   df_venda.idVendedor.values[0], df_venda.cpfCliente[0], df_venda.idCarro[0])
+        nova_venda = VendaVeiculo(df_venda.idvenda.values[0], df_venda.valorvenda.values[0], df_venda.datavenda.values[0],
+                                   df_venda.idvendedor.values[0], df_venda.cpfcliente[0], df_venda.idcarro[0])
         # Exibe os atributos da nova venda
         print(nova_venda.to_string())
         # Retorna o objeto novo_pedido para utilização posterior, caso necessário
@@ -184,8 +167,8 @@ class Controller_Venda:
         else:
             print(f"O id {idVenda} não existe.")
 
-    def verifica_prevenda(self, oracle:OracleQueries, cpfCliente:int=None, idVeiculo:int= None, idVenda:bool=False ) -> bool:
-        df_venda = oracle.sqlToDataFrame(f"select idVenda from LABDATABASE.VendaVeiculo where cpfCliente and idVeiculo  = {cpfCliente} {idVeiculo}")
+    def verifica_prevenda(self, oracle:OracleQueries, cpfCliente:int=None, idCarro:int= None) -> bool:
+        df_venda = oracle.sqlToDataFrame(f"select idVenda from LABDATABASE.VendaVeiculo where cpfCliente = {cpfCliente} and idCarro = {idCarro}")
         return df_venda.empty
     
     def verifica_existencia_venda(self, oracle:OracleQueries, idVenda:int=None) -> bool:
