@@ -35,7 +35,7 @@ class Controller_Venda:
             return None
 
         data_hoje = date.today()
-        #print("Data de hoje: ", data_hoje)
+        print("Data de hoje: ", data_hoje)
 
         if self.verifica_prevenda(oracle, cpfCliente, idCarro):
             #Sistema gera a data da venda com a data de hoje
@@ -124,20 +124,22 @@ class Controller_Venda:
             if Veiculo == None:
                 return None
             else:
-                oracle.write(f"update VendaVeiculo set idCarro = '{novo_idCarro} where cpfCliente = {idVenda}")
+                oracle.write(f"update VendaVeiculo set idCarro = {novo_idCarro} where cpfCliente = {idVenda}")
 
             #Solicita ao usuario o novo valor da venda
             novo_valorVenda = input("Informe o valor da venda: ")
             #atualiza o valor da venda
-            oracle.write(f"update VendaVeiculo set valorVenda = '{novo_valorVenda} where idVenda = {idVenda}")
+            oracle.write(f"update VendaVeiculo set valorVenda = {novo_valorVenda} where idVenda = {idVenda}")
             #Solicita ao usuario o novo id do vendedor
             novo_idVendedor = input("Informe o id do vendedor: ")
             #atualiza o id do vendedor da venda
-            oracle.write(f"update VendaVeiculo set idVendedor = '{novo_idVendedor} where idVenda = {idVenda}")
+            oracle.write(f"update VendaVeiculo set idVendedor = {novo_idVendedor} where idVenda = {idVenda}")
             # Atualiza a data da venda
             nova_dataVenda = input("informe a nova data da venda: ")
+            data_hoje = date.today()
+            print("Data de hoje: ", data_hoje)
             #atualiza nova data da venda
-            oracle.write(f"update VendaVeiculo set dataVenda = '{nova_dataVenda} where idVenda = {idVenda}")
+            oracle.write(f"update VendaVeiculo set dataVenda = {nova_dataVenda}(TO_DATE('YYYY-MM-DD)) where idVenda = {idVenda}")
             # Recupera os dados da nova venda criada transformando em um DataFrame
             df_venda = oracle.sqlToDataFrame(f"select VendaVeiculos  idVenda, valorVenda, dataVenda, idVendedor, cpfCliente, idCarro from VendaVeiculo where idVenda = {idVenda}")
             # Cria um novo objeto venda

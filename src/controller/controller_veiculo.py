@@ -55,22 +55,17 @@ class Controller_Veiculo:
         if not self.verifica_existencia_veiculo(oracle, idCarro):
             # Solicita o novo modelo do veiculo
             novo_modelo = input("modelo (Novo): ")
-            # Atualiza o modelo do veiculo existente
             # Solicita ao usuario a nova cor do veiculo
             nova_cor = input("cor (Novo): ")
-            # Atualiza a cor do veiculo existente
             # Solicita ao usuario o novo ano do veiculo
             novo_ano = input("ano (Novo): ")
-            # Atualiza o ano do veiculo existente
             # Solicita ao usuario o novo chassi do veiculo
             novo_chassiCarro = input("chassi (Novo): ")
-            # Atualiza o chassi existente
             # Solicita o novo cambio do veiculo
             novo_tipoCambio = input("cambio (Novo): ")
-            # Atualiza o cambio do veiculo existente
             # Solicita o novo fabricante do veiculo
             novo_fabricante = input("fabricante (Novo): ")
-            # Atualiza o fabricante do veiculo existente
+            # Atualiza os novos dados do veiculo existente
             oracle.write(f"""update LABDATABASE.Veiculo set modelo = '{novo_modelo}', cor = '{nova_cor}', anoCarro = '{novo_ano}', chassiCarro = '{novo_chassiCarro}',
                           tipoCambio = '{novo_tipoCambio}', fabricante = '{novo_fabricante}' where idCarro = {idCarro}""")
             # Recupera os dados do novo produto criado transformando em um DataFrame
