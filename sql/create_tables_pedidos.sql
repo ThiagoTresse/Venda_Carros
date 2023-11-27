@@ -42,7 +42,7 @@ CREATE TABLE LABDATABASE.Veiculo (
 CREATE TABLE LABDATABASE.VendaVeiculo (
                 idVenda NUMERIC DEFAULT idVenda_SEQ.NEXTVAL NOT NULL,
                 valorVenda NUMERIC NOT NULL,
-                dataVenda DATE NOT NULL,
+                dataVenda NUMERIC NOT NULL,
                 idVendedor NUMERIC NOT NULL,
                 idCarro NUMERIC NOT NULL,
                 cpfCliente VARCHAR(11) NOT NULL,

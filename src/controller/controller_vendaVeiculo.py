@@ -48,9 +48,9 @@ class Controller_Venda:
             idVenda = random.randint(1000,9999)
             print(f"O numero do ID da Venda é {idVenda}")
        # Grava os dados da nova Venda
-        oracle.write(f"insert into LABDATABASE.VendaVeiculo values ('{cpfCliente}', '{idCarro}', TO_DATE('{dataVenda}''DD-MM-YYYY'), '{valorVenda}', '{idVendedor}', '{idVenda}')")
+        oracle.write(f"insert into LABDATABASE.VendaVeiculo values ('{idVenda}', '{valorVenda}', '{dataVenda}', '{idVendedor}', '{idCarro}', '{cpfCliente}')")
         # Recupera os dados do novo pedido criado transformando em um DataFrame
-        df_venda = oracle.sqlToDataFrame(f"select idVenda, valorVenda, dataVenda, idVendedor, cpfCliente, idCarro from LABDATABASE.VendaVeiculo where idVenda = {idVenda}")
+        df_venda = oracle.sqlToDataFrame(f"select idVenda, valorVenda, dataVenda, idVendedor, idCarro, cpfCliente from LABDATABASE.VendaVeiculo where idVenda = {idVenda}")
         # Cria um novo objeto venda
         nova_venda = VendaVeiculo(df_venda.idvenda.values[0], df_venda.valorvenda.values[0], df_venda.datavenda.values[0],
                                    df_venda.idvendedor.values[0], df_venda.cpfcliente[0], df_venda.idcarro[0])
